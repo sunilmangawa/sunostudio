@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cadence · Hear your idea take shape{% endblock %}
+{% block page_id %}home{% endblock %}
+{% block crumb %}Home{% endblock %}
+{% block top_actions %}
+<label class="home-search" for="home-search">⌕ <input id="home-search" type="search" placeholder="Search songs, artists, styles" autocomplete="off"></label>
+<button class="share-btn" id="share-btn">↗ <span>Share</span></button>
+{% endblock %}
+{% block content %}
+<div class="home-content">
+  <section class="hero" aria-label="Create from the home page">
+    <div class="hero-media" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="hero-inner">
+      <p class="hero-kicker">CADENCE STUDIO</p>
+      <h1 class="hero-title">Hear your idea<br><em>take shape.</em></h1>
+      <form class="hero-composer" id="hero-composer" action="/create" method="get">
+        <label class="sr-only" for="hero-prompt">Describe what you want to make</label>
+        <textarea id="hero-prompt" name="prompt" rows="1" maxlength="1200" placeholder="A slow-burning, cinematic groove for the last train home…"></textarea>
+        <div class="hero-composer-foot">
+          <div class="hero-tools">
+            <button type="button" class="hero-tool" id="hero-audio" aria-label="Add audio">♫ <span>Audio</span></button>
+            <button type="button" class="hero-tool" id="hero-instrumental" aria-pressed="false" aria-label="Instrumental">◍ <span>Instrumental</span></button>
+            <input type="file" id="hero-file" accept="audio/*" hidden>
+          </div>
+          <button class="hero-create" id="hero-create" type="submit" disabled>✳ Create</button>
+        </div>
+      </form>
+      <p class="hero-note">Describe a feeling, a scene, or a single line. You can refine everything on the next step.</p>
+    </div>
+  </section>
+
+  <section class="spotlight" aria-label="Artist spotlight">
+    <div class="spotlight-viewport">
+      <article class="spotlight-slide" data-slide="0">
+        <div class="spotlight-art" aria-hidden="true"><span>✳</span></div>
+        <div class="spotlight-copy">
+          <span class="spotlight-label">WRITER'S ROOM</span>
+          <h2>Make the unheard of.</h2>
+          <p>Start from a mood, a lyric fragment, or a reference you already love — then keep shaping it until it sounds like you.</p>
+          <div class="spotlight-actions"><a class="primary-btn" href="/create">Create a song <span>↗</span></a><a class="secondary-btn" href="/studio">Open the studio <span>↗</span></a></div>
+        </div>
+        <div class="spotlight-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </article>
+      <article class="spotlight-slide" data-slide="1" hidden>
+        <div class="spotlight-art alt" aria-hidden="true"><span>◍</span></div>
+        <div class="spotlight-copy">
+          <span class="spotlight-label">FROM PROMPT TO ARRANGEMENT</span>
+          <h2>One idea, many layers.</h2>
+          <p>Carry a finished sketch into the multitrack studio, add parts, and arrange the whole thing on one timeline.</p>
+          <div class="spotlight-actions"><a class="primary-btn" href="/studio">Talk to the studio <span>↗</span></a><a class="secondary-btn" href="/create#clips">See saved clips <span>↗</span></a></div>
+        </div>
+        <div class="spotlight-bars alt" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </article>
+    </div>
+    <nav class="spotlight-dots" aria-label="Spotlight slides">
+      <button class="spotlight-dot active" data-goto="0" aria-label="Go to slide 1"></button>
+      <button class="spotlight-dot" data-goto="1" aria-label="Go to slide 2"></button>
+    </nav>
+  </section>
+
+  {% for rail in rails %}
+  <section class="rail" id="{{ rail.id }}" data-rail>
+    <header class="rail-head">
+      <button class="rail-play" aria-label="Play {{ rail.title }}">▶</button>
+      <a class="rail-title" href="#{{ rail.id }}"><h2>{{ rail.title }}</h2></a>
+      <a class="rail-more" href="/create">See more</a>
+    </header>
+    <div class="rail-body">
+      <button class="rail-arrow prev" aria-label="Scroll {{ rail.title }} backward" disabled>‹</button>
+      <div class="rail-track">
+        {% for song in rail.songs %}
+        <article class="song-card" data-song="{{ song.id }}" data-title="{{ song.title }}" data-artist="{{ song.artist }}" data-genre="{{ song.genre }}" data-audio="{{ song.audio_url }}">
+          <button class="art art-{{ song.art }}" data-play aria-label="Play {{ song.title }}"><span class="art-glyph">◉</span><span class="art-play">▶</span></button>
+          <div class="song-line"><a class="song-title" href="#{{ song.id }}">{{ song.title }}</a><span class="model-tag">{{ song.model }}</span></div>
+          <div class="song-sub"><a class="song-artist" href="#{{ song.id }}">{{ song.artist }}</a><span class="song-sep">·</span><span class="song-plays">{{ song.plays }}</span><span class="song-sep">·</span><a class="song-genre" href="#{{ song.id }}">{{ song.genre }}</a></div>
+          <div class="song-tools"><button class="card-tool" data-menu aria-label="More options for {{ song.title }}">⋯</button><button class="card-tool" data-remix aria-label="Start a remix of {{ song.title }}">⟲</button></div>
+        </article>
+        {% endfor %}
+      </div>
+      <button class="rail-arrow next" aria-label="Scroll {{ rail.title }} forward">›</button>
+    </div>
+  </section>
+  {% endfor %}
+
+  <section class="rail" id="explore">
+    <header class="rail-head"><h2 class="rail-heading">Explore styles</h2><a class="rail-more" href="/create">Try a style</a></header>
+    <div class="style-cloud">
+      {% for style in styles %}<a class="style-pill" href="/create?style={{ style|urlencode }}">{{ style }} <span>↗</span></a>{% endfor %}
+    </div>
+  </section>
+
+  <section class="rail albums" id="new-albums">
+    <header class="rail-head"><h2 class="rail-heading">New Albums</h2><a class="rail-more" href="#new-albums">See all ↗</a></header>
+    <div class="album-grid">
+      {% for album in new_albums %}
+      <article class="album-card" data-title="{{ album.title }}" data-artist="{{ album.artist }}" data-audio="{{ album.audio_url }}">
+        <button class="album-art art-{{ album.art }}" aria-label="Play {{ album.title }}"><span class="art-glyph">◍</span><span class="album-play">▶</span></button>
+        <a class="album-title" href="#{{ album.title|slugify }}">{{ album.title }}</a>
+        <p class="album-sub">{{ album.artist }} · {{ album.count }} songs</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'home.js' %}" defer></script>{% endblock %}

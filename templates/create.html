@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create · Cadence{% endblock %}
+{% block page_id %}create{% endblock %}
+{% block crumb %}Create{% endblock %}
+{% block top_actions %}
+<span class="workspace-chip">◫ {% if request.user.is_authenticated %}{{ request.user.username }}'s workspace{% else %}Guest workspace{% endif %}</span>
+<button class="share-btn" id="share-btn">↗ <span>Share</span></button>
+{% endblock %}
+{% block content %}
+<div class="create-content">
+  <div class="create-head">
+    <div class="tablists">
+      <div class="tablist" role="tablist" aria-label="What to create"><button class="tab active" role="tab" aria-selected="true" data-create-type="song">Songs</button><button class="tab" role="tab" aria-selected="false" data-create-type="speech">Speech</button></div>
+      <div class="tablist" role="tablist" aria-label="Create form mode"><button class="tab" role="tab" aria-selected="false" data-create-mode="simple">Simple</button><button class="tab active" role="tab" aria-selected="true" data-create-mode="advanced">Advanced</button></div>
+    </div>
+    <label class="model-pill">✳ <select id="create-model" aria-label="Model"><option value="balanced">v1 · Balanced</option><option value="expressive">v1 · Expressive</option><option value="experimental">v1 · Experimental</option></select></label>
+    <span class="provider-chip{% if provider.ai %} ai{% endif %}" id="provider-chip" data-provider="{{ provider.provider }}" data-ai="{{ provider.ai|yesno:'true,false' }}" data-detail="{{ provider.detail }}" title="{{ provider.detail }}">{% if provider.ai %}✳ {{ provider.label }}{% else %}◉ {{ provider.label }}{% endif %}</span>
+  </div>
+
+  <form class="create-form" id="create-form" novalidate>
+    <div class="create-tools" id="create-tools" role="group" aria-label="Add material">
+      <button type="button" class="tool-pill" id="tool-audio" aria-expanded="false">♫ <span>Audio</span></button>
+      <button type="button" class="tool-pill" id="tool-voice" aria-expanded="false">◍ <span>Voice</span></button>
+      <button type="button" class="tool-pill" id="tool-inspo" aria-expanded="false">✧ <span>Inspo</span></button>
+      <label class="tool-pill instrumental-pill"><input type="checkbox" id="instrumental"> <span>Instrumental</span></label>
+      <input type="file" id="create-audio-file" accept="audio/*" hidden>
+    </div>
+    <div class="tool-panel" id="panel-audio" hidden><p>Reference audio guides the feel of a sketch. Files stay in this browser session and are not uploaded to the provider.</p><div class="tool-row"><button type="button" class="secondary-btn" id="browse-audio">Browse audio</button><span id="audio-label" class="tool-note">No file chosen</span></div></div>
+    <div class="tool-panel" id="panel-voice" hidden><p>Pick a vocal direction for this sketch.</p><label class="field">VOICE<select id="voice-select"><option value="auto">Auto</option><option value="feminine">Feminine</option><option value="masculine">Masculine</option><option value="no-vocals">No vocals</option></select></label></div>
+    <div class="tool-panel" id="panel-inspo" hidden><p>Start from a mood or playlist idea.</p><label class="field">INSPIRATION<select id="inspo-select"><option value="">Choose a starting point</option><option value="Late night drive">Late night drive</option><option value="Sunday morning">Sunday morning</option><option value="Rain on glass">Rain on glass</option><option value="Festival dusk">Festival dusk</option></select></label></div>
+
+    <div id="simple-fields" hidden>
+      <label class="prompt-field" for="simple-prompt"><span>DESCRIBE YOUR SONG</span><textarea id="simple-prompt" maxlength="1200" rows="5" placeholder="A warm, unhurried soul groove with brushed drums and a close, conversational vocal…"></textarea><small id="simple-count">0 / 1200</small></label>
+    </div>
+
+    <div id="advanced-fields">
+      <section class="form-block" id="lyrics-block">
+        <div class="block-head">
+          <button type="button" class="block-toggle" id="lyrics-toggle" aria-expanded="true">♫ <span>Lyrics</span></button>
+          <div class="block-tools">
+            <button type="button" class="mini-btn" id="lyrics-undo" aria-label="Undo lyrics change" disabled>↶</button>
+            <button type="button" class="mini-btn" id="lyrics-redo" aria-label="Redo lyrics change" disabled>↷</button>
+            <button type="button" class="mini-btn" id="lyrics-new" aria-label="New lyric draft">＋ <span>New draft</span></button>
+            <button type="button" class="mini-btn" id="lyrics-saved" aria-label="Saved lyric drafts" aria-expanded="false">▤ <span>Saved lyrics</span></button>
+            <button type="button" class="mini-btn" id="lyrics-full" aria-label="Expand lyrics editor">⤢</button>
+          </div>
+        </div>
+        <div class="block-body" id="lyrics-body">
+          <div class="saved-lyrics" id="saved-lyrics" hidden></div>
+          <textarea id="lyrics-editor" maxlength="5000" rows="7" aria-label="Lyrics editor" placeholder="Start writing lyrics, or leave this empty for instrumental"></textarea>
+          <div class="lyrics-meta"><span id="lyrics-hint">Start writing lyrics, or leave this empty for instrumental</span><span id="lyrics-count">0 of 5000 characters used.</span></div>
+          <div class="lyrics-draft-row"><label class="sr-only" for="draft-name">Draft name</label><input id="draft-name" class="draft-name" maxlength="80" placeholder="Name this draft"><button type="button" class="mini-btn" id="draft-save">Save draft</button></div>
+          <div class="cowriter">
+            <button type="button" class="cowriter-toggle" id="cowriter-toggle" aria-expanded="false">✎ Help me start a draft</button>
+            <div class="cowriter-panel" id="cowriter-panel" hidden>
+              <p class="tool-note">Drafts use local writing templates — no language model is connected, so nothing is sent anywhere.</p>
+              <div class="cowriter-row"><input id="cowriter-prompt" maxlength="160" placeholder="A song about coming home late"><button type="button" class="mini-btn" id="cowriter-go">Generate</button></div>
+              <div class="cowriter-presets"><button type="button" data-preset="power-ballad">Write a power ballad</button><button type="button" data-preset="indie-hit">Write an indie hit</button><button type="button" data-preset="punk-anthem">Write a punk anthem</button><button type="button" data-preset="jazz-standard">Write a jazz standard</button><button type="button" data-preset="shoegaze">Write a shoegaze song</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-block" id="styles-block">
+        <div class="block-head">
+          <button type="button" class="block-toggle" id="styles-toggle" aria-expanded="true">✳ <span>Styles</span></button>
+          <div class="block-tools">
+            <button type="button" class="mini-btn" id="styles-saved" aria-expanded="false">▤ <span>Saved styles</span></button>
+          </div>
+        </div>
+        <div class="block-body" id="styles-body">
+          <div class="saved-styles" id="saved-styles" hidden></div>
+          <textarea id="style-input" maxlength="1000" rows="3" aria-label="Styles" placeholder="warm analog keys, restrained drums, close vocal, late night"></textarea>
+          <div class="style-meta"><span id="style-count">0 / 1000</span><label class="inline-switch"><input type="checkbox" id="personalize-style"><span>Personalize to my taste</span></label><button type="button" class="mini-btn" id="style-refresh">⟳ Refresh</button><button type="button" class="mini-btn" id="style-save">Save style</button></div>
+          <div class="style-suggests" id="style-suggests"></div>
+        </div>
+      </section>
+
+      <section class="form-block" id="more-block">
+        <div class="block-head"><button type="button" class="block-toggle" id="more-toggle" aria-expanded="true">⚙ <span>More Options</span></button><button type="button" class="mini-btn" id="options-reset">Reset all</button></div>
+        <div class="block-body options-grid" id="more-body">
+          <div class="option"><span class="option-label">Vocal Gender</span><div class="seg-inline" data-option="gender"><button type="button" data-value="male">Male</button><button type="button" data-value="female">Female</button></div></div>
+          <div class="option"><span class="option-label">Duration</span><div class="seg-inline" data-option="duration"><button type="button" data-value="custom">Custom</button><button type="button" data-value="auto">Auto</button></div><label class="field small" id="duration-field" hidden>CUSTOM LENGTH<select id="option-duration"><option value="16">0:16</option><option value="30" selected>0:30</option><option value="60">1:00</option><option value="120">2:00</option><option value="180">3:00</option></select></label></div>
+          <div class="option"><span class="option-label">Max Mode</span><div class="seg-inline" data-option="max"><button type="button" data-value="off">Off</button><button type="button" data-value="on">On</button></div></div>
+          <div class="option wide"><span class="option-label">Weirdness <b id="weirdness-value">50%</b></span><input type="range" id="weirdness" min="0" max="100" value="50"><small class="option-hint" id="weirdness-hint">Expected results</small></div>
+          <div class="option wide"><span class="option-label">Style Influence <b id="influence-value">50%</b></span><input type="range" id="style-influence" min="0" max="100" value="50"><small class="option-hint" id="influence-hint">Moderate</small></div>
+          <div class="option wide"><span class="option-label">Variety <b id="variety-value">Normal</b></span><input type="range" id="variety" min="0" max="2" step="1" value="1"><small class="option-hint" id="variety-hint">Balanced variety</small></div>
+          <div class="option"><span class="option-label">Personalize</span><div class="seg-inline" data-option="personalize"><button type="button" data-value="taste">My Taste</button><button type="button" data-value="off">Off</button><button type="button" data-value="on">On</button></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="create-foot">
+      <label class="field grow">SONG TITLE (OPTIONAL)<input id="song-title" maxlength="120" placeholder="Give this song a name"></label>
+      <div class="save-to"><span>Save to…</span><strong id="save-to">{% if request.user.is_authenticated %}{{ request.user.username }}'s workspace{% else %}This browser{% endif %}</strong></div>
+      <div class="create-actions"><button type="button" class="mini-btn" id="clear-form" aria-label="Clear all form inputs">⌫ Clear all</button><button type="submit" class="generate-btn" id="create-song">✳ <span>Create song</span></button></div>
+    </div>
+    <p class="create-note" id="create-note" hidden></p>
+  </form>
+
+  <section class="clips-section" id="clips">
+    <header class="clips-head"><div class="clips-title"><h2>Your clips</h2><span class="clips-count" id="clips-count">0 songs</span></div><div class="clips-actions"><span class="workspace-chip">◫ {% if request.user.is_authenticated %}{{ request.user.username }}'s workspace{% else %}This browser{% endif %}</span><button class="share-btn" id="clips-share">↗ <span>Share</span></button></div></header>
+    <div class="clips-toolbar">
+      <label class="clip-search" aria-label="Search clips">⌕ <input id="clip-search" placeholder="Search clips"></label>
+      <div class="filter-wrap"><button class="tool-btn" id="filters-btn" aria-expanded="false">☷ <span>Filters (<i id="filter-count">0</i>)</span></button><div class="filter-pop" id="filter-pop" hidden><label><input type="checkbox" value="audio"> Has audio</label><label><input type="checkbox" value="no-audio"> Prompt saved only</label><label><input type="checkbox" value="failed"> Failed</label><button type="button" class="mini-btn" id="filters-clear">Clear filters</button></div></div>
+      <select id="sort-clips" class="tool-select" aria-label="Sort clips"><option value="new">New</option><option value="old">Oldest</option><option value="title">Title</option></select>
+      <button class="tool-btn" id="clip-view" aria-pressed="false">▤ <span>List</span></button>
+      <span class="clips-spacer"></span>
+      <button class="icon-btn tool-icon" id="clips-prev" aria-label="Previous page" disabled>‹</button>
+      <span class="page-indicator" id="clips-page">1</span>
+      <button class="icon-btn tool-icon" id="clips-next" aria-label="Next page" disabled>›</button>
+    </div>
+    <div class="clips-table" id="clips-table" role="table" aria-label="Saved clips"></div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'create.js' %}" defer></script>{% endblock %}

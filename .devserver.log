@@ -1,0 +1,31 @@
+Watching for file changes with StatReloader
+[31/Oct/2026 16:09:18] "GET / HTTP/1.1" 200 29244
+[31/Oct/2026 16:09:18] "GET /preview/test-preview.wav HTTP/1.1" 200 448044
+[31/Oct/2026 16:09:34] "GET /create HTTP/1.1" 200 16711
+[31/Oct/2026 16:09:34] "GET / HTTP/1.1" 200 29244
+[31/Oct/2026 16:09:35] "GET /preview/three-phase-preview.wav HTTP/1.1" 200 448044
+[31/Oct/2026 16:09:58] "GET /preview/three-phase-preview.wav HTTP/1.1" 200 448044
+[31/Oct/2026 16:10:13] "GET / HTTP/1.1" 200 29244
+[31/Oct/2026 16:10:23] "GET / HTTP/1.1" 200 29416
+[31/Oct/2026 16:10:23] "GET /static/pages.css HTTP/1.1" 304 0
+[31/Oct/2026 16:10:23] "GET /static/studio.css HTTP/1.1" 304 0
+[31/Oct/2026 16:10:23] "GET /static/app.js HTTP/1.1" 304 0
+[31/Oct/2026 16:10:23] "GET /static/home.js HTTP/1.1" 304 0
+Not Found: /favicon.ico
+[31/Oct/2026 16:10:23] "GET /favicon.ico HTTP/1.1" 404 3203
+[31/Oct/2026 17:09:17] "GET / HTTP/1.1" 200 29406
+[31/Oct/2026 17:09:17] "GET /static/studio.css HTTP/1.1" 200 29847
+[31/Oct/2026 17:09:17] "GET /static/pages.css HTTP/1.1" 200 26487
+[31/Oct/2026 17:09:17] "GET /static/home.js HTTP/1.1" 200 7167
+[31/Oct/2026 17:09:17] "GET /static/app.js HTTP/1.1" 200 10052
+Not Found: /favicon.ico
+[31/Oct/2026 17:09:17] "GET /favicon.ico HTTP/1.1" 404 3203
+[31/Oct/2026 17:09:45] "GET /create HTTP/1.1" 200 16885
+[31/Oct/2026 17:09:45] "GET /static/create.js HTTP/1.1" 200 39439
+[31/Oct/2026 17:09:45] "GET /api/jobs/ HTTP/1.1" 200 586
+[31/Oct/2026 17:11:46] "GET /studio HTTP/1.1" 200 9797
+[31/Oct/2026 17:11:46] "GET /static/studio.js HTTP/1.1" 200 23894
+[31/Oct/2026 17:11:46] "GET /api/projects/ HTTP/1.1" 200 2346
+[31/Oct/2026 17:37:23] "GET /preview/soft-focus-soft-focus.wav HTTP/1.1" 200 448044
+Not Found: /favicon.ico
+[31/Oct/2026 17:37:23] "GET /favicon.ico HTTP/1.1" 404 3203

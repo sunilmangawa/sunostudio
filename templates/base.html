@@ -1,0 +1,40 @@
+{% load static %}<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10110f"><title>{% block title %}Cadence · Make room for sound{% endblock %}</title><link rel="stylesheet" href="{% static 'studio.css' %}"><link rel="stylesheet" href="{% static 'pages.css' %}">{% block head %}{% endblock %}</head><body class="{% block body_class %}page-body{% endblock %}" data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-page="{% block page_id %}page{% endblock %}" data-username="{{ request.user.username|default:'' }}">
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Primary">
+    <div class="brand-row"><a class="brand" href="/" aria-label="Cadence home"><span class="brand-glyph">◉</span><span>cadence</span></a><button class="sidebar-collapse" id="sidebar-collapse" aria-label="Collapse sidebar" aria-expanded="true">«</button></div>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="nav-item{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="/"><span class="nav-icon">⌂</span><span class="nav-label">Home</span></a>
+      <a class="nav-item" href="/#explore"><span class="nav-icon">✧</span><span class="nav-label">Explore</span></a>
+      <a class="nav-item{% if request.resolver_match.url_name == 'create' %} active{% endif %}" href="/create"><span class="nav-icon">＋</span><span class="nav-label">Create</span></a>
+      <a class="nav-item{% if request.resolver_match.url_name == 'studio' %} active{% endif %}" href="/studio"><span class="nav-icon">▦</span><span class="nav-label">Studio</span></a>
+      <a class="nav-item" href="/create#clips"><span class="nav-icon">♫</span><span class="nav-label">Library</span></a>
+    </nav>
+    {% block sidebar_extra %}{% endblock %}
+    <div class="sidebar-spacer"></div>
+    <div class="usage-card"><div class="usage-top"><span class="usage-spark">✳</span><span>YOUR CREATIVE SPACE</span></div><div class="usage-line"><span>Local project storage</span><span>Ready</span></div><div class="usage-meter"><i></i></div><a class="usage-link" href="/create">Start something new <span>↗</span></a></div>
+    <div class="user-card">
+      <div class="avatar">{{ request.user.username|default:'G'|slice:':1'|upper }}</div>
+      <div class="user-meta"><strong>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest workspace{% endif %}</strong><small>{% if request.user.is_authenticated %}Personal workspace{% else %}Saves in this browser{% endif %}</small></div>
+      {% if request.user.is_authenticated %}<form action="/api/auth/logout/" method="post" class="logout-form">{% csrf_token %}<button class="icon-btn" aria-label="Sign out" title="Sign out">⇥</button></form>{% else %}<a class="icon-btn user-action" href="/api/auth/login/" aria-label="Sign in" title="Sign in">↗</a>{% endif %}
+    </div>
+  </aside>
+  <main class="main-area">
+    {% block topbar %}
+    <header class="topbar">
+      <div class="breadcrumbs"><a class="crumb-link" href="/">Home</a><span class="crumb-sep">/</span><strong>{% block crumb %}Discover{% endblock %}</strong></div>
+      <div class="top-actions">{% block top_actions %}<button class="share-btn" id="share-btn">↗ <span>Share</span></button>{% endblock %}</div>
+    </header>
+    {% endblock %}
+    {% block content %}{% endblock %}
+  </main>
+  {% block after_main %}{% endblock %}
+</div>
+{% block bottombar %}
+<div class="bottom-bar global-playbar"><div class="transport"><button class="transport-btn" id="shuffle-btn" aria-label="Toggle shuffle" aria-pressed="false">⤨</button><button class="transport-btn" id="prev-btn" aria-label="Previous">◀◀</button><button class="play-btn" id="global-play" aria-label="Play">▶</button><button class="transport-btn" id="next-btn" aria-label="Next">▶▶</button><button class="transport-btn" id="repeat-btn" aria-label="Toggle repeat" aria-pressed="false">⟳</button><span class="time-display" id="global-time">0:00</span><input class="playbar-progress" id="global-progress" type="range" min="0" max="100" value="0" aria-label="Playback progress" disabled><span class="playbar-duration" id="global-duration">--:--</span></div><div class="now-playing"><span class="now-art" id="now-art">◉</span><div class="now-meta"><strong id="now-title">Nothing playing</strong><small id="now-sub">Pick a track, a clip, or a saved project</small></div></div><div class="bottom-right"><button class="transport-btn" id="mute-btn" aria-label="Mute" aria-pressed="false">◖</button><input type="range" id="global-volume" min="0" max="100" value="76" aria-label="Volume"></div></div>
+{% endblock %}
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="modal-backdrop" hidden><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="icon-btn modal-close" id="modal-close" aria-label="Close">×</button><div class="eyebrow">YOUR CREATIVE SPACE</div><h2 id="modal-title">Save your work</h2><p id="modal-copy">Create a free account to keep projects, lyrics, and styles in your own library.</p><div class="modal-actions"><button class="secondary-btn" id="modal-cancel">Maybe later</button><a class="primary-btn" id="modal-link" href="/api/auth/register/?next=/create">Create an account <span>↗</span></a></div></section></div>
+<audio id="cadence-audio" preload="metadata"></audio>
+<script src="{% static 'app.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body></html>

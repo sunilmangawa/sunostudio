@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Studio · Cadence{% endblock %}
+{% block body_class %}studio-body{% endblock %}
+{% block page_id %}studio{% endblock %}
+{% block sidebar_extra %}
+<div class="sidebar-rule"></div>
+<div class="projects-head"><span>YOUR PROJECTS</span><button id="new-project" class="icon-btn tiny" aria-label="New project">＋</button></div>
+<div id="project-list" class="project-list" aria-label="Saved projects"></div>
+{% endblock %}
+{% block topbar %}
+<header class="topbar studio-topbar">
+  <div class="breadcrumbs"><span>My workspace</span><span class="crumb-sep">/</span><strong id="project-name">Midnight in motion</strong><button class="rename-btn" id="rename-project" aria-label="Rename project">✎</button><span class="save-state" id="save-state"><i></i> Saved</span></div>
+  <div class="top-actions"><span class="preview-chip">Preview</span><button class="icon-btn top-icon" id="undo-btn" aria-label="Undo" title="Undo">↶</button><button class="icon-btn top-icon" id="redo-btn" aria-label="Redo" title="Redo">↷</button><span class="top-divider"></span><a class="icon-btn top-icon" href="/create" aria-label="Create" title="Create">＋</a><button class="share-btn" id="share-btn">↗ <span>Share</span></button><button class="export-btn" id="export-btn">Export <span>↗</span></button></div>
+</header>
+{% endblock %}
+{% block content %}
+<div class="studio-content studio-page">
+  <div class="studio-meta-row">
+    <div class="studio-timecode"><strong id="timecode">00:00.000</strong><span id="barbeat">001.1.1</span><span class="studio-bpm"><input id="bpm" type="number" min="40" max="240" value="92" aria-label="Tempo in BPM"> BPM</span><span class="studio-meter">4/4</span></div>
+    <div class="studio-meta-actions"><button class="tool-btn" id="import-audio">↥ <span>Import audio</span></button><input type="file" id="audio-file" accept="audio/*" hidden><button class="tool-btn" id="add-track">＋ <span>Add track</span></button><a class="tool-btn" href="/create#clips">♫ <span>Library</span></a></div>
+  </div>
+  <div class="studio-prompt" role="group" aria-label="Studio command bar"><span class="studio-prompt-mark">✳</span><label class="sr-only" for="studio-prompt">Ask for a part</label><input id="studio-prompt" maxlength="400" placeholder="Select a spot on the timeline and ask me to add a part"><span class="beta-tag">BETA</span><button class="studio-prompt-send" id="studio-prompt-send" aria-label="Add this part">↗</button></div>
+  <p class="studio-prompt-note" id="studio-prompt-note" hidden></p>
+
+  <div class="section-toolbar">
+    <div class="section-title"><span class="section-glyph">▥</span><h2>Your arrangement</h2><span class="track-count" id="track-count">4 tracks</span></div>
+    <div class="arrangement-actions"><button class="tool-btn" id="add-track-top">＋ <span>Add track</span></button><button class="icon-btn tool-icon" id="zoom-out" aria-label="Zoom out">−</button><span class="zoom-label" id="zoom-label">100%</span><button class="icon-btn tool-icon" id="zoom-in" aria-label="Zoom in">＋</button><button class="icon-btn tool-icon" id="fit-timeline" aria-label="Fit to view">↔</button></div>
+  </div>
+  <section class="timeline" aria-label="Multitrack arrangement"><div class="timeline-ruler"><div class="ruler-track-label">TRACKS <button id="collapse-tracks" aria-label="Collapse tracks">⌃</button></div><div class="ruler-content"><div class="bar-ruler" id="bar-ruler"><span>1</span><span>5</span><span>9</span><span>13</span><span>17</span><span>21</span><span>25</span><span>29</span></div><div class="playhead-line" id="playhead-line"></div></div></div><div id="tracks-container"></div><div class="timeline-footer"><button id="add-track-bottom">＋ Add a track</button><span>Drag clips to arrange · import audio to start building</span><button id="fit-timeline-bottom">Fit to view ↔</button></div></section>
+</div>
+{% endblock %}
+{% block after_main %}
+<aside class="assistant-panel" id="assistant-panel"><div class="assistant-head"><div class="assistant-title"><span class="assistant-mark">✳</span><div><strong>Creative companion</strong><small>Here when you need a spark</small></div></div><button class="icon-btn" id="close-assistant" aria-label="Close panel">×</button></div><div class="assistant-body"><div class="assistant-intro"><span class="intro-orb">✳</span><h3>Let’s find your<br>next sound.</h3><p>Tell me where you're stuck, or start with one of these.</p></div><button class="suggestion-card" data-prompt="A dusty, warm electric piano loop with a patient, late-night pulse; room for a voice to enter slowly."><span class="suggestion-icon">◌</span><span><strong>Build on a mood</strong><small>Turn a feeling into a direction</small></span><span class="suggestion-arrow">↗</span></button><button class="suggestion-card" data-prompt="Give this arrangement more space: a soft, wide pad beneath the main part, with gentle movement and no added percussion."><span class="suggestion-icon lavender-icon">⌁</span><span><strong>Open up the mix</strong><small>Add depth without crowding it</small></span><span class="suggestion-arrow">↗</span></button><button class="suggestion-card" data-prompt="A simple four-bar bass line in a warm analog tone, syncopated but unhurried, supporting the existing groove."><span class="suggestion-icon gold-icon">∿</span><span><strong>Find a new layer</strong><small>Bring another voice into the room</small></span><span class="suggestion-arrow">↗</span></button><div class="companion-note"><span>✧</span><p>Suggestions are starting points. The best version is the one you make your own.</p></div><div class="refine-box"><label for="refine-prompt">REFINE YOUR DIRECTION</label><textarea id="refine-prompt" placeholder="A touch more space, a little less reverb..."></textarea><button id="refine-btn">Add to the studio <span>↗</span></button></div><button class="assistant-close-link" id="hide-assistant">Hide companion</button></div></aside>
+{% endblock %}
+{% block bottombar %}
+<div class="bottom-bar"><div class="transport"><button class="transport-btn" id="stop-btn" aria-label="Stop">■</button><button class="play-btn" id="play-btn" aria-label="Play">▶</button><button class="transport-btn" id="loop-btn" aria-label="Toggle loop" aria-pressed="false">⟳</button><span class="time-display" id="time-display">00:00 <i>/</i> 00:30</span></div><div class="master-controls"><span class="master-label">MASTER</span><div class="master-meter"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="master-db" id="master-db">−∞ dB</span><input type="range" id="master-volume" min="0" max="100" value="76" aria-label="Master volume"></div><div class="bottom-right"><span class="keyboard-hint"><kbd>Space</kbd> Play <kbd>⌘</kbd><kbd>↵</kbd> Add</span><a class="bottom-settings" href="/create">Create</a></div></div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'studio.js' %}" defer></script>{% endblock %}
